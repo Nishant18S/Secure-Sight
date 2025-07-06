@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureSight | Advanced OSINT Threat Intelligence Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            /* Dark Theme */
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-primary: #6366f1;
+            --dark-accent: #38bdf8;
+            --dark-text: #f8fafc;
+            --dark-border: #334155;
+            
+            /* Light Theme */
+            --light-bg: #f8fafc;
+            --light-card: #ffffff;
+            --light-primary: #4f46e5;
+            --light-accent: #0284c7;
+            --light-text: #1e293b;
+            --light-border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            transition: all 0.3s ease;
+        }
+
+        .light-mode {
+            background-color: var(--light-bg);
+            color: var(--light-text);
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+        }
+
+        .dashboard-title {
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .light-mode .navbar {
+            background-color: rgba(248, 250, 252, 0.95);
+            border-bottom: 1px solid var(--light-border);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .brand-accent {
+            color: var(--dark-accent);
+        }
+
+        .light-mode .brand-accent {
+            color: var(--light-accent);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            position: relative;
+        }
+
+        .nav-link.active {
+            color: var(--dark-accent);
+        }
+
+        .light-mode .nav-link.active {
+            color: var(--light-accent);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 1rem;
+            background-color: var(--dark-accent);
+            transition: width 0.3s ease;
+        }
+
+        .light-mode .nav-link::after {
+            background-color: var(--light-accent);
+        }
+
+        .nav-link.active::after,
+        .nav-link:hover::after {
+            width: calc(100% - 2rem);
+        }
+
+        /* Dashboard Layout */
+        .dashboard-container {
+            padding: 2rem 0;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-card {
+            background-color: var(--dark-card);
+            border-radius: 0.75rem;
+            border: 1px solid var(--dark-border);
+            padding: 1.5rem;
+            height: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .light-mode .dashboard-card {
+            background-color: var(--light-card);
+            border: 1px solid var(--light-border);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            margin-right: 0.75rem;
+            color: var(--dark-accent);
+        }
+
+        .light-mode .card-title i {
+            color: var(--light-accent);
+        }
+
+        /* Threat Gauge */
+        .gauge-container {
+            position: relative;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+
+        .gauge-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-accent);
+        }
+
+        .light-mode .gauge-label {
+            color: var(--light-accent);
+        }
+
+        .threat-level {
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table th {
+            background-color: rgba(56, 189, 248, 0.1);
+            color: var(--dark-accent);
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+
+        .light-mode .data-table th {
+            background-color: rgba(2, 132, 199, 0.1);
+            color: var(--light-accent);
+        }
+
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .light-mode .data-table td {
+            border-bottom: 1px solid var(--light-border);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Status Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.35rem 0.75rem;
+            border-radius: 0.375rem;
+        }
+
+        .badge-critical {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .badge-high {
+            background-color: rgba(249, 115, 22, 0.1);
+            color: #f97316;
+        }
+
+        .badge-medium {
+            background-color: rgba(234, 179, 8, 0.1);
+            color: #eab308;
+        }
+
+        .badge-low {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        /* Search Box */
+        .search-container {
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            display: flex;
+            background-color: var(--dark-card);
+            border-radius: 0.75rem;
+            border: 1px solid var(--dark-border);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .search-box {
+            background-color: var(--light-card);
+            border: 1px solid var(--light-border);
+        }
+
+        .search-box:focus-within {
+            border-color: var(--dark-accent);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        .light-mode .search-box:focus-within {
+            border-color: var(--light-accent);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 1rem;
+            color: var(--dark-text);
+            font-size: 1rem;
+        }
+
+        .light-mode .search-input {
+            color: var(--light-text);
+        }
+
+        .search-input::placeholder {
+            color: rgba(148, 163, 184, 0.7);
+        }
+
+        .light-mode .search-input::placeholder {
+            color: rgba(100, 116, 139, 0.7);
+        }
+
+        .search-btn {
+            background-color: var(--dark-primary);
+            border: none;
+            color: white;
+            padding: 0 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .search-btn:hover {
+            background-color: #4f46e5;
+        }
+
+        /* Activity Timeline */
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background-color: var(--dark-accent);
+        }
+
+        .light-mode .timeline-dot {
+            background-color: var(--light-accent);
+        }
+
+        .timeline-content {
+            background-color: var(--dark-card);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border-left: 3px solid var(--dark-accent);
+        }
+
+        .light-mode .timeline-content {
+            background-color: var(--light-card);
+            border-left: 3px solid var(--light-accent);
+        }
+
+        .timeline-date {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Image Analysis Section */
+        .image-analysis-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .image-upload-area {
+            border: 2px dashed var(--dark-border);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .image-upload-area {
+            border-color: var(--light-border);
+        }
+
+        .image-upload-area:hover {
+            border-color: var(--dark-accent);
+            background-color: rgba(56, 189, 248, 0.05);
+        }
+
+        .light-mode .image-upload-area:hover {
+            border-color: var(--light-accent);
+            background-color: rgba(2, 132, 199, 0.05);
+        }
+
+        .image-upload-icon {
+            font-size: 3rem;
+            color: var(--dark-accent);
+            margin-bottom: 1rem;
+        }
+
+        .light-mode .image-upload-icon {
+            color: var(--light-accent);
+        }
+
+        .image-preview-container {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .image-preview {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid var(--dark-border);
+        }
+
+        .light-mode .image-preview {
+            border-color: var(--light-border);
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .image-analysis-results {
+            margin-top: 1rem;
+        }
+
+        .analysis-result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .light-mode .analysis-result-item {
+            border-bottom-color: var(--light-border);
+        }
+
+        .analysis-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .analysis-property {
+            font-weight: 500;
+        }
+
+        .analysis-value {
+            font-weight: 600;
+        }
+
+        .face-matches {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .face-match-card {
+            width: 80px;
+            text-align: center;
+        }
+
+        .face-match-img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            border: 1px solid var(--dark-border);
+        }
+
+        .light-mode .face-match-img {
+            border-color: var(--light-border);
+        }
+
+        .face-match-score {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .metadata-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .metadata-table th, .metadata-table td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .light-mode .metadata-table th, 
+        .light-mode .metadata-table td {
+            border-bottom-color: var(--light-border);
+        }
+
+        .metadata-table th {
+            font-weight: 500;
+            color: var(--dark-accent);
+            width: 30%;
+        }
+
+        .light-mode .metadata-table th {
+            color: var(--light-accent);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .image-preview-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <span class="brand-text">Secure<span class="brand-accent">Sight</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-home me-1"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-search me-1"></i> Investigations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-image me-1"></i> Image Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-chart-line me-1"></i> Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-cog me-1"></i> Settings</a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <a class="nav-link" href="#">
+                            <img src="https://via.placeholder.com/30" class="rounded-circle" alt="User">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard Content -->
+    <div class="container dashboard-container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1 class="dashboard-title">Advanced Threat Intelligence Dashboard</h1>
+                <p class="text-muted">Comprehensive OSINT monitoring with image analysis capabilities</p>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <span class="badge bg-danger me-1">LIVE</span>
+                    <span>Last updated: <span id="update-time">Just now</span></span>
+                </div>
+                <button class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-sync-alt me-1"></i> Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search by name, email, phone, username, or image URL...">
+                <button class="search-btn"><i class="fas fa-search me-1"></i> Search</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="row g-4">
+            <!-- Threat Overview Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="card-title">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Threat Overview</span>
+                    </div>
+                    <div class="gauge-container">
+                        <canvas id="threatGauge"></canvas>
+                        <div class="gauge-label">72%</div>
+                    </div>
+                    <div class="threat-level">High Risk Profile</div>
+                </div>
+            </div>
+
+            <!-- Recent Alerts Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="card-title">
+                        <i class="fas fa-bell"></i>
+                        <span>Recent Alerts</span>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Critical</span>
+                            <span class="badge badge-critical">3 new</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>High</span>
+                            <span class="badge badge-high">7 new</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Medium</span>
+                            <span class="badge badge-medium">12 new</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Low</span>
+                            <span class="badge badge-low">5 new</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Sources Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="card-title">
+                        <i class="fas fa-database"></i>
+                        <span>Data Sources</span>
+                    </div>
+                    <canvas id="sourcesChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Image Analysis Stats Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="card-title">
+                        <i class="fas fa-image"></i>
+                        <span>Image Analysis</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h3 class="mb-0">48</h3>
+                        <span class="badge bg-success">+12 today</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: 78%;"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <small>Processed: 37</small>
+                        <small>Pending: 11</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Findings Table -->
+            <div class="col-lg-8">
+                <div class="dashboard-card">
+                    <div class="card-title">
+                        <i class="fas fa-table"></i>
+                        <span>Recent Findings</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Type</th>
+                                    <th>Risk</th>
+                                    <th>Source</th>
+                                    <th>Last Seen</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>john.doe@example.com</td>
+                                    <td>Email</td>
+                                    <td><span class="badge badge-critical">Critical</span></td>
+                                    <td>Dark Web</td>
+                                    <td>2 minutes ago</td>
+                                    <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>@johndoe</td>
+                                    <td>Twitter</td>
+                                    <td><span class="badge badge-high">High</span></td>
+                                    <td>Social Media</td>
+                                    <td>15 minutes ago</td>
+                                    <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>profile.jpg</td>
+                                    <td>Image</td>
+                                    <td><span class="badge badge-high">High</span></td>
+                                    <td>LinkedIn</td>
+                                    <td>25 minutes ago</td>
+                                    <td><button class="btn btn-sm btn-outline-primary">Analyze</button></td>
+                                </tr>
+                                <tr>
+                                    <td>+1 (555) 123-4567</td>
+                                    <td>Phone</td>
+                                    <td><span class="badge badge-medium">Medium</span></td>
+                                    <td>Public Records</td>
+                                    <td>1 hour ago</td>
+                                    <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>John Doe</td>
+                                    <td>Name</td>
+                                    <td><span class="badge badge-low">Low</span></td>
+                                    <td>Court Records</td>
+                                    <td>3 hours ago</td>
+                                    <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Timeline -->
+            <div class="col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-title">
+                        <i class="fas fa-history"></i>
+                        <span>Recent Activity</span>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">2 minutes ago</div>
+                                <p>New critical threat detected in Dark Web monitoring</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">15 minutes ago</div>
+                                <p>Twitter account @johndoe flagged for suspicious activity</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">25 minutes ago</div>
+                                <p>Image analysis completed for profile.jpg (3 matches found)</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">1 hour ago</div>
+                                <p>Phone number +1 (555) 123-4567 linked to potential fraud case</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Analysis Section -->
+            <div class="col-12">
+                <div class="dashboard-card">
+                    <div class="card-title">
+                        <i class="fas fa-image"></i>
+                        <span>Image Analysis Findings</span>
+                    </div>
+                    <div class="image-analysis-container">
+                        <div class="image-upload-area" id="imageUploadArea">
+                            <div class="image-upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h5>Drag & Drop Image Here</h5>
+                            <p class="text-muted">or click to browse files</p>
+                            <input type="file" id="imageUploadInput" accept="image/*" style="display: none;">
+                        </div>
+
+                        <div class="image-preview-container" id="imagePreviewContainer" style="display: none;">
+                            <div class="image-preview">
+                                <img id="uploadedImage" src="" alt="Uploaded Image">
+                            </div>
+                            <div class="image-analysis-results" style="flex: 1;">
+                                <h5>Analysis Results</h5>
+                                <div class="analysis-result-item">
+                                    <span class="analysis-property">Face Detection:</span>
+                                    <span class="analysis-value badge bg-success">3 faces found</span>
+                                </div>
+                                <div class="analysis-result-item">
+                                    <span class="analysis-property">Image Source:</span>
+                                    <span class="analysis-value">Likely social media</span>
+                                </div>
+                                <div class="analysis-result-item">
+                                    <span class="analysis-property">Metadata:</span>
+                                    <span class="analysis-value badge bg-warning text-dark">Partially stripped</span>
+                                </div>
+                                <div class="analysis-result-item">
+                                    <span class="analysis-property">Risk Assessment:</span>
+                                    <span class="analysis-value badge badge-high">High</span>
+                                </div>
+
+                                <h6 class="mt-4">Potential Matches</h6>
+                                <div class="face-matches">
+                                    <div class="face-match-card">
+                                        <img src="https://via.placeholder.com/80?text=Match+1" class="face-match-img" alt="Match 1">
+                                        <div class="face-match-score">87% match</div>
+                                    </div>
+                                    <div class="face-match-card">
+                                        <img src="https://via.placeholder.com/80?text=Match+2" class="face-match-img" alt="Match 2">
+                                        <div class="face-match-score">76% match</div>
+                                    </div>
+                                    <div class="face-match-card">
+                                        <img src="https://via.placeholder.com/80?text=Match+3" class="face-match-img" alt="Match 3">
+                                        <div class="face-match-score">65% match</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metadata-results">
+                            <h5>Image Metadata</h5>
+                            <table class="metadata-table">
+                                <tr>
+                                    <th>File Name:</th>
+                                    <td>profile.jpg</td>
+                                </tr>
+                                <tr>
+                                    <th>File Size:</th>
+                                    <td>245 KB</td>
+                                </tr>
+                                <tr>
+                                    <th>Dimensions:</th>
+                                    <td>800 × 600 px</td>
+                                </tr>
+                                <tr>
+                                    <th>Format:</th>
+                                    <td>JPEG</td>
+                                </tr>
+                                <tr>
+                                    <th>Created:</th>
+                                    <td>2023-05-15 14:32:10</td>
+                                </tr>
+                                <tr>
+                                    <th>Modified:</th>
+                                    <td>2023-06-22 09:15:43</td>
+                                </tr>
+                                <tr>
+                                    <th>Camera Make:</th>
+                                    <td>Apple</td>
+                                </tr>
+                                <tr>
+                                    <th>Camera Model:</th>
+                                    <td>iPhone 12</td>
+                                </tr>
+                                <tr>
+                                    <th>GPS Coordinates:</th>
+                                    <td class="text-danger">Not available</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+        // Initialize Threat Gauge
+        function initThreatGauge() {
+            const canvas = document.getElementById('threatGauge');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 70;
+            const value = 72; // Example threat score
+            
+            // Draw background circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2, false);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 12;
+            ctx.stroke();
+            
+            // Draw value arc
+            const startAngle = -Math.PI / 2;
+            const endAngle = startAngle + (Math.PI * 2 * (value / 100));
+            
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 12;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        // Initialize Data Sources Chart
+        function initSourcesChart() {
+            const ctx = document.getElementById('sourcesChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Social Media', 'Public Records', 'Dark Web', 'Web Archives', 'Image DB'],
+                    datasets: [{
+                        data: [30, 20, 15, 15, 20],
+                        backgroundColor: [
+                            '#6366f1',
+                            '#38bdf8',
+                            '#f59e0b',
+                            '#10b981',
+                            '#8b5cf6'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update timestamp
+        function updateTimestamp() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('update-time').textContent = `Today, ${timeString}`;
+        }
+
+        // Image Upload Handling
+        function setupImageUpload() {
+            const uploadArea = document.getElementById('imageUploadArea');
+            const fileInput = document.getElementById('imageUploadInput');
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const uploadedImage = document.getElementById('uploadedImage');
+
+            // Click handler for upload area
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Drag and drop handlers
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#38bdf8';
+                uploadArea.style.backgroundColor = 'rgba(56, 189, 248, 0.1)';
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = 'var(--dark-border)';
+                uploadArea.style.backgroundColor = 'transparent';
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--dark-border)';
+                uploadArea.style.backgroundColor = 'transparent';
+
+                if (e.dataTransfer.files.length) {
+                    handleImageUpload(e.dataTransfer.files[0]);
+                }
+            });
+
+            // File input change handler
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleImageUpload(e.target.files[0]);
+                }
+            });
+
+            function handleImageUpload(file) {
+                if (!file.type.match('image.*')) {
+                    alert('Please select an image file');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedImage.src = e.target.result;
+                    uploadArea.style.display = 'none';
+                    previewContainer.style.display = 'flex';
+                    
+                    // Simulate analysis completion
+                    setTimeout(() => {
+                        document.querySelector('.image-analysis-results').style.opacity = '1';
+                    }, 500);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initThreatGauge();
+            initSourcesChart();
+            updateTimestamp();
+            setupImageUpload();
+            
+            // Update timestamp every minute
+            setInterval(updateTimestamp, 60000);
+        });
+    </script>
+</body>
+</html>

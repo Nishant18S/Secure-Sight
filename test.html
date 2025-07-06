@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureSight - Advanced OSINT Platform</title>
+    <meta name="description" content="Advanced OSINT platform for digital footprint analysis and threat assessment">
+    <!-- Favicon -->
+    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rubik+Mono+One&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dark-mode">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h3>Initializing SecureSight</h3>
+            <div class="progress mt-3">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <span class="logo-text">Secure<span class="logo-highlight">Sight</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#solutions">Solutions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#team">Team</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-cta" href="#search">Scan Now</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dark/Light Mode Toggle -->
+    <div class="theme-switch-wrapper">
+        <span id="toggle-icon">
+            <i class="fas fa-sun"></i>
+        </span>
+        <label class="theme-switch">
+            <input type="checkbox">
+            <span class="slider round"></span>
+        </label>
+    </div>
+
+    <!-- Hero Carousel -->
+    <section class="hero-carousel">
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6" data-aos="fade-right">
+                                <h1 class="hero-title">Track, Analyze, Secure</h1>
+                                <h2 class="hero-subtitle">Uncover Digital Footprints with AI</h2>
+                                <p class="hero-text">SecureSight provides advanced OSINT capabilities to analyze public digital footprints and assess threat levels across 50+ data sources.</p>
+                                <div class="search-container">
+                                    <div class="search-box">
+                                        <input type="text" placeholder="Enter name, email, or phone..." class="search-input">
+                                        <button class="search-btn">Scan Now <i class="fas fa-search"></i></button>
+                                    </div>
+                                    <div class="mt-2 text-muted">
+                                        <small>Try: "john.doe@example.com" or "+1-555-123-4567"</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6" data-aos="fade-left">
+                                <canvas id="cyberCanvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6" data-aos="fade-right">
+                                <h1 class="hero-title">Global Threat Intelligence</h1>
+                                <h2 class="hero-subtitle">Real-time Risk Assessment</h2>
+                                <p class="hero-text">Our platform aggregates data from multiple sources to provide comprehensive threat analysis with 95% accuracy.</p>
+                                <div class="search-container">
+                                    <div class="search-box">
+                                        <input type="text" placeholder="Enter domain or IP address..." class="search-input">
+                                        <button class="search-btn">Analyze <i class="fas fa-shield-alt"></i></button>
+                                    </div>
+                                    <div class="mt-2 text-muted">
+                                        <small>Try: "example.com" or "192.168.1.1"</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6" data-aos="fade-left">
+                                <div id="globe-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6" data-aos="fade-right">
+                                <h1 class="hero-title">Deep Digital Recon</h1>
+                                <h2 class="hero-subtitle">Uncover Hidden Connections</h2>
+                                <p class="hero-text">Reveal relationships and patterns across social media, forums, and dark web sources with our advanced correlation engine.</p>
+                                <div class="search-container">
+                                    <div class="search-box">
+                                        <input type="text" placeholder="Enter username or alias..." class="search-input">
+                                        <button class="search-btn">Investigate <i class="fas fa-user-secret"></i></button>
+                                    </div>
+                                    <div class="mt-2 text-muted">
+                                        <small>Try: "johndoe" or "@john_doe"</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6" data-aos="fade-left">
+                                <canvas id="networkCanvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 col-6 stat-item" data-aos="fade-up">
+                    <div class="stat-number" data-count="500000">0</div>
+                    <div class="stat-label">Records Analyzed</div>
+                </div>
+                <div class="col-md-3 col-6 stat-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-number" data-count="95">0</div>
+                    <div class="stat-label">Accuracy Rate</div>
+                </div>
+                <div class="col-md-3 col-6 stat-item" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-number" data-count="50">0</div>
+                    <div class="stat-label">Data Sources</div>
+                </div>
+                <div class="col-md-3 col-6 stat-item" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-number" data-count="24">0</div>
+                    <div class="stat-label">Response Time (hrs)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Key Features</h2>
+            <p class="section-subtitle text-center mb-5" data-aos="fade-up" data-aos-delay="100">Powerful tools for comprehensive digital investigations</p>
+            
+            <div class="row">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Threat Assessment</h3>
+                        <p>Comprehensive risk scoring based on digital footprint analysis with multi-factor evaluation.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Risk scoring algorithm</li>
+                            <li><i class="fas fa-check-circle"></i> Threat classification</li>
+                            <li><i class="fas fa-check-circle"></i> Vulnerability detection</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>Global Data Mapping</h3>
+                        <p>Visualize data spread across platforms and geographic regions with interactive maps.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Geographic heatmaps</li>
+                            <li><i class="fas fa-check-circle"></i> Platform distribution</li>
+                            <li><i class="fas fa-check-circle"></i> Temporal analysis</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h3>Activity Timeline</h3>
+                        <p>Historical view of digital activities and associations with time-based filtering.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Chronological view</li>
+                            <li><i class="fas fa-check-circle"></i> Event correlation</li>
+                            <li><i class="fas fa-check-circle"></i> Pattern detection</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                        <h3>Connection Mapping</h3>
+                        <p>Visualize relationships between entities and accounts with dynamic graphs.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Social graph analysis</li>
+                            <li><i class="fas fa-check-circle"></i> Relationship weighting</li>
+                            <li><i class="fas fa-check-circle"></i> Cluster detection</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3>Real-time Alerts</h3>
+                        <p>Get notified about new digital footprint changes with configurable triggers.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Custom alert rules</li>
+                            <li><i class="fas fa-check-circle"></i> Multi-channel notifications</li>
+                            <li><i class="fas fa-check-circle"></i> Threshold settings</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <h3>Comprehensive Reports</h3>
+                        <p>Detailed PDF reports with actionable insights and executive summaries.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Custom templates</li>
+                            <li><i class="fas fa-check-circle"></i> Export formats</li>
+                            <li><i class="fas fa-check-circle"></i> Automated scheduling</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solutions Section -->
+    <section id="solutions" class="solutions-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Industry Solutions</h2>
+            <p class="section-subtitle text-center mb-5" data-aos="fade-up" data-aos-delay="100">Tailored OSINT solutions for your industry needs</p>
+            
+            <div class="row">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                    <div class="solution-card">
+                        <div class="solution-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3>Corporate Security</h3>
+                        <p>Protect your organization from digital threats and brand impersonation.</p>
+                        <ul>
+                            <li>Executive protection</li>
+                            <li>Brand monitoring</li>
+                            <li>Insider threat detection</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="solution-card">
+                        <div class="solution-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <h3>Legal & Compliance</h3>
+                        <p>Gather evidence and conduct due diligence investigations.</p>
+                        <ul>
+                            <li>Litigation support</li>
+                            <li>Regulatory compliance</li>
+                            <li>Asset discovery</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="solution-card">
+                        <div class="solution-icon">
+                            <i class="fas fa-shield-virus"></i>
+                        </div>
+                        <h3>Government</h3>
+                        <p>National security and law enforcement intelligence gathering.</p>
+                        <ul>
+                            <li>Counter-terrorism</li>
+                            <li>Cybercrime investigation</li>
+                            <li>Fraud detection</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                    <div class="solution-card">
+                        <div class="solution-icon">
+                            <i class="fas fa-user-secret"></i>
+                        </div>
+                        <h3>Private Investigators</h3>
+                        <p>Enhanced tools for professional investigators and researchers.</p>
+                        <ul>
+                            <li>Person locator</li>
+                            <li>Background checks</li>
+                            <li>Activity verification</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="solution-card">
+                        <div class="solution-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <h3>Journalism</h3>
+                        <p>Fact-checking and source verification for media professionals.</p>
+                        <ul>
+                            <li>Source validation</li>
+                            <li>Disinformation detection</li>
+                            <li>Investigative research</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="solution-card">
+                        <div class="solution-icon">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <h3>Personal Security</h3>
+                        <p>Monitor your digital footprint and protect your online identity.</p>
+                        <ul>
+                            <li>Reputation management</li>
+                            <li>Identity theft prevention</li>
+                            <li>Privacy auditing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="dashboard-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Threat Dashboard</h2>
+            <p class="section-subtitle text-center mb-5" data-aos="fade-up" data-aos-delay="100">Interactive visualization of threat intelligence data</p>
+            
+            <div class="row">
+                <div class="col-lg-4" data-aos="fade-right">
+                    <div class="threat-card">
+                        <h3>Threat Score</h3>
+                        <div class="gauge-container">
+                            <canvas id="threatGauge" width="200" height="200"></canvas>
+                            <div class="gauge-label">65%</div>
+                        </div>
+                        <div class="threat-description">
+                            <p>Moderate risk profile detected</p>
+                            <div class="threat-breakdown">
+                                <div class="threat-factor">
+                                    <span class="factor-name">Social Media</span>
+                                    <span class="factor-score medium">Medium</span>
+                                </div>
+                                <div class="threat-factor">
+                                    <span class="factor-name">Dark Web</span>
+                                    <span class="factor-score low">Low</span>
+                                </div>
+                                <div class="threat-factor">
+                                    <span class="factor-name">Data Breaches</span>
+                                    <span class="factor-score high">High</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8" data-aos="fade-left">
+                    <div class="timeline-card">
+                        <h3>Activity Timeline</h3>
+                        <div class="chart-container">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6" data-aos="fade-right">
+                    <div class="data-card">
+                        <h3>Platform Distribution</h3>
+                        <div class="chart-container">
+                            <canvas id="platformChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" data-aos="fade-left">
+                    <div class="data-card">
+                        <h3>Content Type Analysis</h3>
+                        <div class="chart-container">
+                            <canvas id="contentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12" data-aos="fade-up">
+                    <div class="data-globe-card">
+                        <h3>Global Data Spread</h3>
+                        <div id="dataGlobe"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Pricing Plans</h2>
+            <p class="section-subtitle text-center mb-5" data-aos="fade-up" data-aos-delay="100">Choose the plan that fits your investigation needs</p>
+            
+            <div class="row">
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Starter</h3>
+                            <div class="price"><span class="currency">$</span>99<span class="period">/month</span></div>
+                            <p>For individuals and small teams</p>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li><i class="fas fa-check"></i> 100 searches/month</li>
+                                <li><i class="fas fa-check"></i> Basic threat scoring</li>
+                                <li><i class="fas fa-check"></i> 30-day history</li>
+                                <li><i class="fas fa-check"></i> Email alerts</li>
+                                <li><i class="fas fa-check"></i> Standard reports</li>
+                                <li><i class="fas fa-times"></i> API Access</li>
+                                <li><i class="fas fa-times"></i> Dark web monitoring</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-footer">
+                            <button class="btn btn-outline-primary">Get Started</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pricing-card featured">
+                        <div class="pricing-header">
+                            <div class="popular-badge">Most Popular</div>
+                            <h3>Professional</h3>
+                            <div class="price"><span class="currency">$</span>299<span class="period">/month</span></div>
+                            <p>For security professionals and businesses</p>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li><i class="fas fa-check"></i> 500 searches/month</li>
+                                <li><i class="fas fa-check"></i> Advanced threat scoring</li>
+                                <li><i class="fas fa-check"></i> 90-day history</li>
+                                <li><i class="fas fa-check"></i> Multi-channel alerts</li>
+                                <li><i class="fas fa-check"></i> Custom reports</li>
+                                <li><i class="fas fa-check"></i> Basic API Access</li>
+                                <li><i class="fas fa-check"></i> Dark web monitoring</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-footer">
+                            <button class="btn btn-primary">Get Started</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Enterprise</h3>
+                            <div class="price"><span class="currency">$</span>899<span class="period">/month</span></div>
+                            <p>For large organizations and agencies</p>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li><i class="fas fa-check"></i> Unlimited searches</li>
+                                <li><i class="fas fa-check"></i> Premium threat scoring</li>
+                                <li><i class="fas fa-check"></i> Full history access</li>
+                                <li><i class="fas fa-check"></i> Real-time alerts</li>
+                                <li><i class="fas fa-check"></i> Advanced reports</li>
+                                <li><i class="fas fa-check"></i> Full API Access</li>
+                                <li><i class="fas fa-check"></i> Deep web monitoring</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-footer">
+                            <button class="btn btn-outline-primary">Contact Sales</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Trusted by Security Professionals</h2>
+            <p class="section-subtitle text-center mb-5" data-aos="fade-up" data-aos-delay="100">What our users say about SecureSight</p>
+            
+            <div class="row">
+                <div class="col-lg-4" data-aos="fade-up">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"SecureSight has transformed our threat intelligence capabilities. The connection mapping feature alone has helped us uncover sophisticated attack networks."</p>
+                        <div class="testimonial-author">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Michael Chen">
+                            <div class="author-info">
+                                <h4>Michael Chen</h4>
+                                <p>CSO, TechCorp</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="testimonial-text">"As a private investigator, the timeline feature has been invaluable for building chronologies of digital activity in my cases."</p>
+                        <div class="testimonial-author">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson">
+                            <div class="author-info">
+                                <h4>Sarah Johnson</h4>
+                                <p>Private Investigator</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"The dark web monitoring has helped us identify compromised credentials before they could be used in attacks, saving us millions."</p>
+                        <div class="testimonial-author">
+                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="David Rodriguez">
+                            <div class="author-info">
+                                <h4>David Rodriguez</h4>
+                                <p>Director of Security, FinBank</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="team-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Our Cybersecurity Experts</h2>
+            <p class="section-subtitle text-center mb-5" data-aos="fade-up" data-aos-delay="100">The minds behind SecureSight's intelligence platform</p>
+            
+            <div class="row">
+                <div class="col-md-4" data-aos="fade-up">
+                    <div class="team-card">
+                        <div class="team-img">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex Morgan">
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-linkedin"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                        <h3>Alex Morgan</h3>
+                        <p>Lead Threat Analyst</p>
+                        <p class="team-bio">Former NSA cybersecurity specialist with 15 years of experience in threat intelligence and digital forensics.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="team-card">
+                        <div class="team-img">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Chen">
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-linkedin"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                        <h3>Sarah Chen</h3>
+                        <p>OSINT Specialist</p>
+                        <p class="team-bio">Expert in open-source intelligence gathering with a focus on social media and dark web analysis.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="team-card">
+                        <div class="team-img">
+                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="James Rodriguez">
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-linkedin"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                        <h3>James Rodriguez</h3>
+                        <p>Data Visualization Expert</p>
+                        <p class="team-bio">Specializes in transforming complex data into actionable visual intelligence for security teams.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content" data-aos="fade-up">
+                <h2>Ready to enhance your threat intelligence?</h2>
+                <p>Start your free 14-day trial today with no credit card required.</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary btn-lg">Start Free Trial</a>
+                    <a href="#" class="btn btn-outline-light btn-lg">Schedule Demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <h3>SecureSight</h3>
+                    <p>Advanced OSINT platform for digital footprint analysis and threat assessment.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h3>Product</h3>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">Roadmap</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Guides</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Case Studies</a></li>
+                        <li><a href="#">Webinars</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Team</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+                <!-- <div class="col-lg-2 col-md-4">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Compliance</a></li>
+                        <li><a href="#">DPA -->
+</div>
+</div>
+</footer>
+</body></html>
